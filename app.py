@@ -15,7 +15,7 @@ st.write("Aplikasi ini akan mengotomasi pengisian dokumen. Template diambil lang
 
 # --- KONFIGURASI GITHUB ---
 # Pastikan link ini mengarah ke file DOK.docx versi terbaru Anda (yang tidak ada garis bawahnya)
-GITHUB_RAW_URL = "https://raw.githubusercontent.com/alberanalafean22/testotomasidokumen/main/dok.docx"
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/alberanalafean22/testotomasidokumen/main/DOK.docx"
 
 # 1. Input Data Umum
 st.subheader("1. Informasi Umum Dokumen")
