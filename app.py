@@ -25,7 +25,7 @@ for i in range(int(jumlah_lampiran)):
 if st.button("Generate Surat"):
     try:
         # Memuat template
-        doc = DocxTemplate("template.docx")
+        doc = DocxTemplate("test.docx")
         
         # Mapping data ke placeholder
         context = {
