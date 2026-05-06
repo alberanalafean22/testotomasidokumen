@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from docx import Document
 from docx.shared import Pt
+from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 import io
 import requests
@@ -10,10 +11,11 @@ import traceback
 st.set_page_config(page_title="Generator SK BPS", layout="centered")
 
 st.title("📝 Generator Dokumen SK BPS Kota Solok")
-st.write("Aplikasi ini akan mengotomasi pengisian dokumen. Template DOK.docx diambil langsung dari GitHub.")
+st.write("Aplikasi ini akan mengotomasi pengisian dokumen. Template diambil langsung dari GitHub.")
 
 # --- KONFIGURASI GITHUB ---
-GITHUB_RAW_URL = "https://raw.githubusercontent.com/alberanalafean22/testotomasidokumen/main/DOK.docx"
+# Pastikan link ini mengarah ke file DOK.docx versi terbaru Anda (yang tidak ada garis bawahnya)
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/username-anda/nama-repo-anda/main/dok.docx"
 
 # 1. Input Data Umum
 st.subheader("1. Informasi Umum Dokumen")
@@ -45,11 +47,10 @@ if "doc_data" not in st.session_state:
 if "doc_name" not in st.session_state:
     st.session_state.doc_name = ""
 
-# --- FUNGSI UNTUK MEMAKSA FONT ---
+# --- FUNGSI CUSTOM FONT & BORDER ---
 def apply_bookman_font(run, size=11):
     """Menerapkan font Bookman Old Style ke dalam elemen Word"""
     run.font.name = 'Bookman Old Style'
-    # Kode XML di bawah ini memaksa Word untuk tidak kembali ke font bawaan
     run._element.rPr.rFonts.set(qn('w:eastAsia'), 'Bookman Old Style')
     run.font.size = Pt(size)
 
@@ -59,6 +60,29 @@ def set_cell_text_with_font(cell, text):
     for p in cell.paragraphs:
         for run in p.runs:
             apply_bookman_font(run, size=11)
+
+def set_bottom_border(cell):
+    """Menerapkan garis ganda hitam (double border) di bagian bawah sebuah sel"""
+    tc = cell._tc
+    tcPr = tc.get_or_add_tcPr()
+    
+    # Mencari tag batas (borders) dari sel, jika tidak ada, buat baru
+    tcBorders = tcPr.first_child_found_in("w:tcBorders")
+    if tcBorders is None:
+        tcBorders = OxmlElement('w:tcBorders')
+        tcPr.append(tcBorders)
+        
+    # Memeriksa batas bawah, jika tidak ada, buat baru
+    bottom = tcBorders.first_child_found_in("w:bottom")
+    if bottom is None:
+        bottom = OxmlElement('w:bottom')
+        tcBorders.append(bottom)
+        
+    # Mengatur ketebalan (sz=12 setara dengan 1.5 pt), tipe double, warna hitam (000000)
+    bottom.set(qn('w:val'), 'double')
+    bottom.set(qn('w:sz'), '12')
+    bottom.set(qn('w:space'), '0')
+    bottom.set(qn('w:color'), '000000')
 
 # 3. Tombol Eksekusi
 if st.button("Proses & Buat Dokumen", type="primary"):
@@ -82,7 +106,7 @@ if st.button("Proses & Buat Dokumen", type="primary"):
                     "{nomor}": nomor
                 }
                 
-                # Fungsi replace teks paragraf dengan Font Bookman
+                # Fungsi replace teks
                 def replace_text_in_paragraphs(paragraphs):
                     for p in paragraphs:
                         original_text = p.text
@@ -94,7 +118,6 @@ if st.button("Proses & Buat Dokumen", type="primary"):
                         
                         if changed:
                             p.text = original_text
-                            # Paksa semua font di paragraf ini jadi Bookman
                             for run in p.runs:
                                 apply_bookman_font(run, size=11)
 
@@ -103,7 +126,6 @@ if st.button("Proses & Buat Dokumen", type="primary"):
                 for table in doc.tables:
                     for row in table.rows:
                         for cell in row.cells:
-                            # Jangan replace bagian {nama} dulu, biarkan logic tabel yang tangani
                             if "{nama}" not in cell.text.lower():
                                 replace_text_in_paragraphs(cell.paragraphs)
 
@@ -122,18 +144,33 @@ if st.button("Proses & Buat Dokumen", type="primary"):
                     if target_table: break
                 
                 if target_table and template_row_idx != -1:
+                    last_row = None
                     for index, row_data in edited_df.iterrows():
                         if index == 0:
+                            # Jika orang pertama, gunakan baris asli template
                             target_row = target_table.rows[template_row_idx]
                         else:
+                            # Jika orang ke 2, 3, dst, TAMBAHKAN BARIS KOSONG (sebagai 1 spasi antar baris)
+                            spacer = target_table.add_row()
+                            
+                            # Kemudian, tambahkan baris baru untuk data orang tersebut
                             target_row = target_table.add_row()
                         
-                        # Menggunakan fungsi custom untuk isi teks dan font
+                        # Isi data ke baris yang sudah disediakan/dibuat
                         set_cell_text_with_font(target_row.cells[0], f"{index + 1}.")
                         set_cell_text_with_font(target_row.cells[1], str(row_data["Nama/Jabatan"]))
                         set_cell_text_with_font(target_row.cells[2], str(row_data["NIP/Golongan"]))
                         set_cell_text_with_font(target_row.cells[3], str(row_data["Posisi"]))
                         set_cell_text_with_font(target_row.cells[4], f"Rp{row_data['Honor']}")
+                        
+                        # Simpan posisi baris terakhir yang diisi
+                        last_row = target_row
+                    
+                    # SETELAH SEMUA DATA DIMASUKKAN, GARIS GANDA DITAMBAHKAN KE BARIS TERAKHIR
+                    if last_row:
+                        for cell in last_row.cells:
+                            set_bottom_border(cell)
+                            
                 else:
                     st.warning("⚠️ Peringatan: Teks {nama} tidak ditemukan di dalam tabel Word.")
 
@@ -152,7 +189,7 @@ if st.button("Proses & Buat Dokumen", type="primary"):
 
 # 4. Menampilkan Tombol Unduh
 if st.session_state.doc_ready:
-    st.success("✅ Dokumen berhasil diproses dengan font Bookman Old Style!")
+    st.success("✅ Dokumen berhasil diproses (Dilengkapi spasi antar baris & Garis Penutup Tabel)!")
     st.download_button(
         label="⬇️ Unduh Dokumen Hasil",
         data=st.session_state.doc_data,
