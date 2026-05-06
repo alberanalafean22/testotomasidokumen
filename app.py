@@ -23,12 +23,12 @@ col1, col2 = st.columns(2)
 
 with col1:
     nomor = st.text_input("A.Nomor Dokumen", placeholder="Contoh: 042.1 TAHUN 2026")
-    tanggal = st.text_input("ETanggal Ditetapkan", placeholder="Contoh: 15 Januari 2026")
+    tanggal = st.text_input("B.Tanggal Ditetapkan", placeholder="Contoh: 15 Januari 2026")
     petugas = st.text_input("C.Menetapkan...", placeholder="Contoh: Petugas Sensus Ekonomi 2026")
 
 with col2:
-    tentang = st.text_input("B.Judul [tulis dengan huruf besar]", placeholder="Contoh: PETUGAS SENSUS EKONOMI 2026")
-    pelaksanaan = st.text_input("D.Pelaksanaan Kegiatan", placeholder="Contoh: Sensus Ekonomi 2026")
+    tentang = st.text_input("D.Judul [tulis dengan huruf besar]", placeholder="Contoh: PETUGAS SENSUS EKONOMI 2026")
+    pelaksanaan = st.text_input("E.Pelaksanaan Kegiatan", placeholder="Contoh: Sensus Ekonomi 2026")
 
 # 2. Input Data Tabel (Dinamis)
 st.subheader("F. Lampiran")
