@@ -1,3 +1,6 @@
+
+
+
 import streamlit as st
 import pandas as pd
 from docx import Document
@@ -14,7 +17,8 @@ st.title("📝 Generator Dokumen SK BPS Kota Solok")
 st.write("Aplikasi ini akan mengotomasi pengisian dokumen. Template diambil langsung dari GitHub.")
 
 # --- KONFIGURASI GITHUB ---
-# Pastikan link ini mengarah ke file DOK.docx versi terbaru Anda (yang tidak ada garis bawahnya)
+# Pastikan link ini mengarah ke file DOK.docx versi terbaru Anda
+
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/alberanalafean22/testotomasidokumen/main/DOK.docx"
 
 # 1. Input Data Umum
@@ -66,14 +70,14 @@ def set_bottom_border(cell):
     tc = cell._tc
     tcPr = tc.get_or_add_tcPr()
     
-    # Mencari tag batas (borders) dari sel, jika tidak ada, buat baru
-    tcBorders = tcPr.first_child_found_in("w:tcBorders")
+    # Mencari tag batas (borders) menggunakan find() agar kompatibel dan bebas error
+    tcBorders = tcPr.find(qn('w:tcBorders'))
     if tcBorders is None:
         tcBorders = OxmlElement('w:tcBorders')
         tcPr.append(tcBorders)
         
-    # Memeriksa batas bawah, jika tidak ada, buat baru
-    bottom = tcBorders.first_child_found_in("w:bottom")
+    # Memeriksa batas bawah
+    bottom = tcBorders.find(qn('w:bottom'))
     if bottom is None:
         bottom = OxmlElement('w:bottom')
         tcBorders.append(bottom)
@@ -91,7 +95,7 @@ if st.button("Proses & Buat Dokumen", type="primary"):
             response = requests.get(GITHUB_RAW_URL)
             
             if response.status_code != 200:
-                st.error("Gagal mengunduh template. Pastikan link Raw GitHub benar.")
+                st.error(f"Gagal mengunduh template (Status: {response.status_code}). Pastikan link Raw GitHub benar.")
                 st.session_state.doc_ready = False
             else:
                 template_file = io.BytesIO(response.content)
