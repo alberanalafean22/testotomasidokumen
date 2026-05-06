@@ -22,13 +22,13 @@ st.subheader("1. Informasi Umum Dokumen")
 col1, col2 = st.columns(2)
 
 with col1:
-    nomor = st.text_input("Nomor Dokumen", placeholder="Contoh: 123/BPS/2026")
+    nomor = st.text_input("Nomor Dokumen", placeholder="Contoh: 042.1 TAHUN 2026")
     tanggal = st.text_input("Tanggal Ditetapkan", placeholder="Contoh: 15 Januari 2026")
-    petugas = st.text_input("Petugas, ex: Petugas Sensus Ekonomi 2026", placeholder="Contoh: Tim Pengolah Data")
+    petugas = st.text_input("Menetapkan...", placeholder="Contoh: Petugas Sensus Ekonomi 2026")
 
 with col2:
-    tentang = st.text_input("Judul (TULIS DENGAN HURUF BESAR) ex: PETUGAS SENSUS EKONOMI", placeholder="Contoh: TIM PENGOLAH DATA")
-    pelaksanaan = st.text_input("Pelaksanaan Kegiatan, ex: Sensus Ekonomi 2026", placeholder="Contoh: kegiatan Survei Sosial Ekonomi Nasional")
+    tentang = st.text_input("Judul", placeholder="Contoh: PETUGAS SENSUS EKONOMI 2026 [tulis dengan huruf besar")
+    pelaksanaan = st.text_input("Pelaksanaan Kegiatan", placeholder="Contoh: Sensus Ekonomi 2026")
 
 # 2. Input Data Tabel (Dinamis)
 st.subheader("2. Data Petugas (Lampiran)")
