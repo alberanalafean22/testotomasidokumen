@@ -13,7 +13,7 @@ st.title("📝 Generator Dokumen SK BPS Kota Solok")
 st.write("Aplikasi ini akan mengotomasi pengisian dokumen. Template DOK.docx diambil langsung dari GitHub.")
 
 # --- KONFIGURASI GITHUB ---
-GITHUB_RAW_URL = "https://raw.githubusercontent.com/username-anda/nama-repo-anda/main/dok.docx"
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/testotomasidokumen/main/dok.docx"
 
 # 1. Input Data Umum
 st.subheader("1. Informasi Umum Dokumen")
