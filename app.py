@@ -22,16 +22,16 @@ st.subheader("1. Informasi Umum Dokumen")
 col1, col2 = st.columns(2)
 
 with col1:
-    nomor = st.text_input("Nomor Dokumen", placeholder="Contoh: 042.1 TAHUN 2026")
-    tanggal = st.text_input("Tanggal Ditetapkan", placeholder="Contoh: 15 Januari 2026")
-    petugas = st.text_input("Menetapkan...", placeholder="Contoh: Petugas Sensus Ekonomi 2026")
+    nomor = st.text_input("A.Nomor Dokumen", placeholder="Contoh: 042.1 TAHUN 2026")
+    tanggal = st.text_input("ETanggal Ditetapkan", placeholder="Contoh: 15 Januari 2026")
+    petugas = st.text_input("C.Menetapkan...", placeholder="Contoh: Petugas Sensus Ekonomi 2026")
 
 with col2:
-    tentang = st.text_input("Judul [tulis dengan huruf besar]", placeholder="Contoh: PETUGAS SENSUS EKONOMI 2026")
-    pelaksanaan = st.text_input("Pelaksanaan Kegiatan", placeholder="Contoh: Sensus Ekonomi 2026")
+    tentang = st.text_input("B.Judul [tulis dengan huruf besar]", placeholder="Contoh: PETUGAS SENSUS EKONOMI 2026")
+    pelaksanaan = st.text_input("D.Pelaksanaan Kegiatan", placeholder="Contoh: Sensus Ekonomi 2026")
 
 # 2. Input Data Tabel (Dinamis)
-st.subheader("2. Data Petugas (Lampiran)")
+st.subheader("F. Lampiran")
 default_data = pd.DataFrame({
     "Nama/Jabatan": ["Alber Analafean"],
     "NIP/Golongan": ["199801012025011001 / III/a"],
