@@ -2,54 +2,44 @@ import streamlit as st
 from docxtpl import DocxTemplate
 import io
 
-st.set_page_config(page_title="Docx Generator", layout="centered")
+st.title("Generator Surat Otomatis")
 
-st.title("Isi Surat Otomatis")
+# Input Nama dan Nomor[cite: 1]
+nama = st.text_input("Nama:")
+nomor = st.text_input("Nomor:")
 
-# Input Nama dan Nomor
-nama_user = st.text_input("Nama Lengkap")
-nomor_surat = st.text_input("Nomor Surat")
+st.subheader("Daftar Lampiran")
+# Input jumlah lampiran agar baris bertambah ke bawah[cite: 1]
+jumlah = st.number_input("Jumlah baris lampiran", min_value=1, value=1)
 
-st.divider()
+items = []
+for i in range(int(jumlah)):
+    ket = st.text_input(f"Isi Lampiran {i+1}", key=f"lp_{i}")
+    items.append({'l_ket': ket})
 
-# Bagian Lampiran Dinamis
-st.subheader("Lampiran")
-jumlah_lampiran = st.number_input("Banyaknya Lampiran", min_value=1, value=1, step=1)
-
-data_lampiran = []
-for i in range(int(jumlah_lampiran)):
-    isi_ket = st.text_input(f"Isi Lampiran ke-{i+1}", key=f"input_{i}")
-    data_lampiran.append({'l_ket': isi_ket})
-
-if st.button("Proses dan Unduh Docx"):
-    if not nama_user or not nomor_surat:
-        st.warning("Mohon isi Nama dan Nomor terlebih dahulu.")
-    else:
-        try:
-            # Panggil file test.docx
-            doc = DocxTemplate("test.docx")
-            
-            # Data yang dikirim ke Word
-            context = {
-                'nama': nama_user,
-                'nomor': nomor_surat,
-                'lampiran_table': data_lampiran
-            }
-            
-            # Proses pengisian
-            doc.render(context)
-            
-            # Simpan ke memori
-            bio = io.BytesIO()
-            doc.save(bio)
-            bio.seek(0)
-            
-            st.success("Selesai! Klik tombol di bawah untuk mengunduh.")
-            st.download_button(
-                label="Download File .docx",
-                data=bio,
-                file_name=f"Surat_{nama_user}.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
-        except Exception as e:
-            st.error(f"Gagal memproses dokumen: {e}")
+if st.button("Buat Docx"):
+    try:
+        doc = DocxTemplate("test.docx")
+        
+        # Data yang dikirim harus sama dengan tag di {{ }} dan {% %}
+        context = {
+            'nama': nama,
+            'nomor': nomor,
+            'lampiran_table': items
+        }
+        
+        doc.render(context)
+        
+        buffer = io.BytesIO()
+        doc.save(buffer)
+        buffer.seek(0)
+        
+        st.success("Berhasil!")
+        st.download_button(
+            label="Download File",
+            data=buffer,
+            file_name="hasil_surat.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+    except Exception as e:
+        st.error(f"Gagal: {e}")
