@@ -27,7 +27,7 @@ with col1:
     petugas = st.text_input("Petugas, ex: Petugas Sensus Ekonomi 2026", placeholder="Contoh: Tim Pengolah Data")
 
 with col2:
-    tentang = st.text_input("Tentang/Judul (TULIS DENGAN HURUF BESAR), ex: PETUGAS SENSUS EKONOMI", placeholder="Contoh: TIM PENGOLAH DATA")
+    tentang = st.text_input("Judul (TULIS DENGAN HURUF BESAR) ex: PETUGAS SENSUS EKONOMI", placeholder="Contoh: TIM PENGOLAH DATA")
     pelaksanaan = st.text_input("Pelaksanaan Kegiatan, ex: Sensus Ekonomi 2026", placeholder="Contoh: kegiatan Survei Sosial Ekonomi Nasional")
 
 # 2. Input Data Tabel (Dinamis)
